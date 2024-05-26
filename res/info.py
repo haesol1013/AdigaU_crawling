@@ -8,5 +8,5 @@ valid_posts = {
     "matdongyeop": 37
 }
 
-insta_id = "sry.xiii"
-insta_pw = "10sol13shin@MA"
+insta_id = ""
+insta_pw = ""
