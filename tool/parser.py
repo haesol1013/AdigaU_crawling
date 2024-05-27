@@ -1,34 +1,5 @@
 import re
-
-
-def split_tag(tags: list[str]) -> list[str]:
-    result = []
-    for tag in tags:
-        if "#" not in tag[1:]:
-            result.append(tag)
-        else:
-            result.extend(map(lambda x: "#" + x, tag[1:].split("#")))
-    return result
-
-
-def get_category(tags: list[str]) -> list[str]:
-    tags = str(tags)
-    category = []
-    if "카페" in tags:
-        category.append("카페")
-    elif "술집" in tags:
-        category.append("술집")
-    elif "맛집" in tags:
-        category.append("맛집")
-
-    meat = ["고기", "삼겹살", "한우", "소고기", "구이"]
-    if [1 for x in meat if x in tags]:
-        category.append("고깃집")
-
-    if "빵집" in tags or "베이글" in tags:
-        category.append("베이커리")
-
-    return category
+from classification_tool import *
 
 
 def parse_daejeon_people(text, is_video: bool):
