@@ -18,7 +18,7 @@ def init() -> None:
 
     # ChromeOptions 설정
     options = Options()
-    # options.add_argument("--headless")
+    #options.add_argument("--headless")
     options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36")
 
     # Chrome 실행 및 instagram 접속
@@ -34,7 +34,6 @@ def init() -> None:
     password_input.send_keys(info.insta_pw)
     login_button = driver.find_element(By.XPATH, "//button[@type='submit']")
     login_button.click()
-    time.sleep(1)
     driver.implicitly_wait(5)
 
 
@@ -50,11 +49,10 @@ def get_content(soup) -> str | None:
         content = uni.normalize('NFC', content)
     except:
         content = None
-
     return content
 
 
-def choose_func(user_tag: str):
+def choose_parser(user_tag: str):
     match user_tag:
         case "daejeon_people":
             return parser.parse_daejeon_people
@@ -64,7 +62,8 @@ def choose_func(user_tag: str):
 
 def get_like(soup) -> int | None:
     try:
-        like = soup.select('.x193iq5w.xeuugli.x1fj9vlw.x13faqbe.x1vvkbs.xt0psk2.x1i0vuye.xvs91rp.x1s688f.x5n08af.x10wh9bi.x1wdrske.x8viiok.x18hxmgj')[0].text
+        like = soup.select(
+            '.x193iq5w.xeuugli.x1fj9vlw.x13faqbe.x1vvkbs.xt0psk2.x1i0vuye.xvs91rp.x1s688f.x5n08af.x10wh9bi.x1wdrske.x8viiok.x18hxmgj')[0].text
         like = int(re.findall(r'[\d]+', like)[0])
     except:
         like = None
@@ -78,15 +77,16 @@ def check_video(soup):
 
 
 def get_data(user_tag: str) -> tuple[list[dict], list[int]]:
+    parsing_func = choose_parser(user_tag)
+    total_data = []
+    total_like = []
+
     driver.get('https://www.instagram.com/' + user_tag + '/')
     first = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.CSS_SELECTOR, info.first_posts[user_tag])))
     first.click()
     driver.implicitly_wait(2)
 
-    parsing_func = choose_func(user_tag)
-    total_data = []
-    total_like = []
-    for i in range(info.valid_posts[user_tag]):
+    for _ in range(info.valid_posts[user_tag]):
         html = driver.page_source
         soup = BeautifulSoup(html, 'html.parser')
 
@@ -97,7 +97,7 @@ def get_data(user_tag: str) -> tuple[list[dict], list[int]]:
         total_like.append(get_like(soup))
 
         move_next()
-        time.sleep(1.5)
+        driver.implicitly_wait(2)
     return total_data, total_like
 
 
@@ -113,15 +113,17 @@ def append_extra_info(total_data: list[dict], likes: list[int], user_tag: str) -
     for idx, value in enumerate(total_data):
         total_data[idx]["like"] = after_likes[idx]
         total_data[idx]["img_url"] = img_urls[user_tag][idx]
-
-        if total_data[idx]["name"] and total_data[idx]["location"] and total_data[idx]["tags"]:
+        if (total_data[idx]["name"] and
+                total_data[idx]["location"] and
+                total_data[idx]["tags"] and
+                total_data[idx]["time"]):
             intact_data.append(total_data[idx])
 
     return intact_data
 
 
 def write_json(new_data: list[dict]) -> None:
-    path = r"../res/result.json"
+    path = r"../res/data.json"
     with open(path, "r", encoding="utf-8") as json_file:
         load_data = json.load(json_file)
     load_data += new_data
