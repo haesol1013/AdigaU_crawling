@@ -33,8 +33,8 @@ def get_category(tags: list[str]) -> list[str]:
 
 def parse_daejeon_people(text, is_video: bool):
     # 정규식 패턴 설정
-    description_pattern = re.compile(r"^(.*?)(?=◈#)", re.DOTALL)
-    name_pattern = re.compile(r"◈#(.*?)◈")
+    description_pattern = re.compile(r"^(.*?)(?=◈)", re.DOTALL)
+    name_pattern = re.compile(r"◈(.*?)◈")
     info_pattern = re.compile(r"＊(.*?)#")
     tags_pattern = re.compile(r"#\S+")
 
@@ -50,7 +50,7 @@ def parse_daejeon_people(text, is_video: bool):
 
     # 딕셔너리 형태로 저장
     result = {
-        "name": name_match.group(1) if name_match else None,
+        "name": name_match.group(1).replace("#", "") if name_match else None,
         "location": info_tmp[0] if info_tmp else None,
         "time": info_tmp[1] if info_tmp else None,
         "tags": tags,
