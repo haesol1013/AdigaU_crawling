@@ -1,12 +1,15 @@
-def get_category(tags: list[str]) -> list[str]:
+import json
+
+
+def get_category(tags: list[str]) -> str:
     tags = str(tags)
-    category = []
+    category = None
     if "카페" in tags:
-        category.append("카페")
+        category = "카페"
     elif "술집" in tags:
-        category.append("술집")
+        category = "술집"
     elif "맛집" in tags:
-        category.append("맛집")
+        category = "맛집"
     return category
 
 
@@ -19,3 +22,26 @@ def split_tag(tags: list[str]) -> list[str]:
             result.extend(map(lambda x: "#" + x, tag[1:].split("#")))
     return result
 
+
+def is_available(dict_: dict) -> bool:
+    result = (dict_["name"] and
+              dict_["location"] and
+              dict_["time"] and
+              dict_["description"] and
+              dict_["category"])
+    return result
+
+
+def get_intact_data() -> None:
+    raw_data_path = r"../res/raw_data.json"
+    processed_data_path = r"../res/processed_data.json"
+
+    with open(raw_data_path, "r", encoding="utf-8") as json_file:
+        raw_data = json.load(json_file)
+    processed_data = [dict_ for dict_ in raw_data if is_available(dict_)]
+    with open(processed_data_path, "w", encoding="utf-8") as json_file:
+        json.dump(processed_data, json_file, ensure_ascii=False, indent=4)
+
+
+if __name__ == "__main__":
+    get_intact_data()
