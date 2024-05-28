@@ -54,4 +54,4 @@ def change_category():
 
 
 if __name__ == "__main__":
-    change_category()
+    get_intact_data()
