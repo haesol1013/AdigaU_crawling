@@ -78,7 +78,7 @@ def check_video(soup):
 def get_data(user_tag: str) -> tuple[list[dict], list[int]]:
     parsing_func = choose_parser(user_tag)
     total_data = []
-    total_like = []
+    total_likes = []
 
     driver.get('https://www.instagram.com/' + user_tag + '/')
     first = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.CSS_SELECTOR, info.first_posts[user_tag])))
@@ -91,18 +91,19 @@ def get_data(user_tag: str) -> tuple[list[dict], list[int]]:
 
         content = get_content(soup)
         is_video = check_video(soup)
+        likes = get_like(soup)
 
-        total_data.append(parsing_func(content, is_video))
-        total_like.append(get_like(soup))
+        total_data.append(parsing_func(content, is_video, likes))
+        total_likes.append(likes)
 
         move_next()
         driver.implicitly_wait(2)
-    return total_data, total_like
+    return total_data, total_likes
 
 
 def append_extra_info(total_data: list[dict], likes: list[int], user_tag: str) -> list[dict]:
     likes = np.array(likes)
-    after_likes = likes / np.mean(likes)
+    like_ratio = np.round(likes / np.mean(likes), 3)
 
     path = r"../res/img_url.json"
     with open(path, "r", encoding="utf-8") as json_file:
@@ -110,7 +111,7 @@ def append_extra_info(total_data: list[dict], likes: list[int], user_tag: str) -
 
     result_data = []
     for idx, value in enumerate(total_data):
-        total_data[idx]["like"] = after_likes[idx]
+        total_data[idx]["like_ratio"] = like_ratio[idx]
         total_data[idx]["img_url"] = img_urls[user_tag][idx]
         result_data.append(total_data[idx])
     return result_data
