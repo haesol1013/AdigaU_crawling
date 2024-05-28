@@ -2,7 +2,7 @@ import re
 from classification_tool import *
 
 
-def parse_daejeon_people(text, is_video: bool):
+def parse_daejeon_people(text: str, is_video: bool, likes: int):
     # 정규식 패턴 설정
     description_pattern = re.compile(r"^(.*?)(?=◈)", re.DOTALL)
     name_pattern = re.compile(r"◈(.*?)◈")
@@ -27,12 +27,13 @@ def parse_daejeon_people(text, is_video: bool):
         "tags": tags,
         "description": description_match.group(1).strip() if description_match else None,
         "category": get_category(tags),
-        "isVideo": is_video
+        "isVideo": is_video,
+        "likes": likes
     }
     return result
 
 
-def parse_matdongyeop(text, is_video):
+def parse_matdongyeop(text: str, is_video: bool, likes: int):
     # 정규식 패턴 설정
     description_pattern = re.compile(r'.+?(?=▪️)', re.DOTALL)
     name_pattern = re.compile(r"📌\S+")
@@ -74,6 +75,7 @@ def parse_matdongyeop(text, is_video):
         "tags": tags,
         "description": description,
         "category": get_category(tags),
-        "isVideo": is_video
+        "isVideo": is_video,
+        "likes": likes
     }
     return result
