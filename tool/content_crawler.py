@@ -42,13 +42,26 @@ def move_next() -> None:
     driver.implicitly_wait(2)
 
 
-def get_content(soup) -> str | None:
+def get_content():
+    html = driver.page_source
+    soup = BeautifulSoup(html, 'html.parser')
+
     try:
         content = soup.select('div._a9zs')[0].text
         content = uni.normalize('NFC', content)
     except:
         content = None
-    return content
+
+    try:
+        likes = soup.select('.x193iq5w.xeuugli.x1fj9vlw.x13faqbe.x1vvkbs.xt0psk2.x1i0vuye.xvs91rp.x1s688f.x5n08af.x10wh9bi.x1wdrske.x8viiok.x18hxmgj')[0].text
+        likes = int(re.findall(r'[\d]+', likes)[0])
+    except:
+        likes = None
+
+    video = soup.find('video')
+    is_video = True if video else False
+
+    return content, is_video, likes
 
 
 def choose_parser(user_tag: str):
@@ -59,44 +72,24 @@ def choose_parser(user_tag: str):
             return parser.parse_matdongyeop
 
 
-def get_like(soup) -> int | None:
-    try:
-        like = soup.select('.x193iq5w.xeuugli.x1fj9vlw.x13faqbe.x1vvkbs.xt0psk2.x1i0vuye.xvs91rp.x1s688f.x5n08af.x10wh9bi.x1wdrske.x8viiok.x18hxmgj')[0].text
-        like = int(re.findall(r'[\d]+', like)[0])
-    except:
-        like = None
-    return like
-
-
-def check_video(soup):
-    video = soup.find('video')
-    is_video = True if video else False
-    return is_video
-
-
 def get_data(user_tag: str) -> tuple[list[dict], list[int]]:
     parsing_func = choose_parser(user_tag)
     total_data = []
     total_likes = []
 
     driver.get('https://www.instagram.com/' + user_tag + '/')
-    first = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.CSS_SELECTOR, info.first_posts[user_tag])))
+    first = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.CSS_SELECTOR, info.account[user_tag]["first_post"])))
     first.click()
     driver.implicitly_wait(2)
 
-    for _ in range(info.valid_posts[user_tag]):
-        html = driver.page_source
-        soup = BeautifulSoup(html, 'html.parser')
-
-        content = get_content(soup)
-        is_video = check_video(soup)
-        likes = get_like(soup)
-
+    for _ in range(info.account[user_tag]["valid_posts"]):
+        content, is_video, likes = get_content()
         total_data.append(parsing_func(content, is_video, likes))
         total_likes.append(likes)
 
         move_next()
         driver.implicitly_wait(2)
+
     return total_data, total_likes
 
 
@@ -108,7 +101,7 @@ def append_extra_info(total_data: list[dict], likes: list[int], user_tag: str) -
         img_urls = json.load(json_file)
 
     result_data = []
-    for idx, value in enumerate(total_data):
+    for idx in range(info.account[user_tag]["valid_posts"]):
         total_data[idx]["like_ratio"] = like_ratio[idx]
         total_data[idx]["img_url"] = img_urls[user_tag][idx]
         result_data.append(total_data[idx])
