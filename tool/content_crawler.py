@@ -18,7 +18,6 @@ def init() -> None:
 
     # ChromeOptions 설정
     options = Options()
-    #options.add_argument("--headless")
     options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36")
 
     # Chrome 실행 및 instagram 접속
@@ -105,8 +104,7 @@ def append_extra_info(total_data: list[dict], likes: list[int], user_tag: str) -
     likes = np.array(likes)
     like_ratio = np.round(likes / np.mean(likes), 3)
 
-    path = r"../res/img_url.json"
-    with open(path, "r", encoding="utf-8") as json_file:
+    with open(info.img_url_path, "r", encoding="utf-8") as json_file:
         img_urls = json.load(json_file)
 
     result_data = []
@@ -118,11 +116,10 @@ def append_extra_info(total_data: list[dict], likes: list[int], user_tag: str) -
 
 
 def write_json(new_data: list[dict]) -> None:
-    path = r"../res/raw_data.json"
-    with open(path, "r", encoding="utf-8") as json_file:
+    with open(info.raw_data_path, "r", encoding="utf-8") as json_file:
         load_data = json.load(json_file)
     load_data += [dict_ for dict_ in new_data if dict_ not in load_data]
-    with open(path, "w", encoding="utf-8") as json_file:
+    with open(info.raw_data_path, "w", encoding="utf-8") as json_file:
         json.dump(load_data, json_file, ensure_ascii=False, indent=4)
 
 
