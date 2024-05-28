@@ -1,15 +1,16 @@
 import json
+import res.info as info
 
 
 def get_category(tags: list[str]) -> str:
     tags = str(tags)
     category = None
     if "카페" in tags:
-        category = "카페"
+        category = "cafes"
     elif "술집" in tags:
-        category = "술집"
+        category = "pubs"
     elif "맛집" in tags:
-        category = "맛집"
+        category = "restaurants"
     return category
 
 
@@ -33,15 +34,24 @@ def is_available(dict_: dict) -> bool:
 
 
 def get_intact_data() -> None:
-    raw_data_path = r"../res/raw_data.json"
-    processed_data_path = r"../res/processed_data.json"
-
-    with open(raw_data_path, "r", encoding="utf-8") as json_file:
+    with open(info.raw_data_path, "r", encoding="utf-8") as json_file:
         raw_data = json.load(json_file)
     processed_data = [dict_ for dict_ in raw_data if is_available(dict_)]
-    with open(processed_data_path, "w", encoding="utf-8") as json_file:
+    with open(info.processed_data_path, "w", encoding="utf-8") as json_file:
         json.dump(processed_data, json_file, ensure_ascii=False, indent=4)
 
 
+def change_category():
+    with open(info.processed_data_path, "r", encoding="utf-8") as json_file:
+        source_data = json.load(json_file)
+
+    for dict_ in source_data:
+        tags = dict_["tags"]
+        dict_["category"] = get_category(tags)
+
+    with open(info.processed_data_path, "w", encoding="utf-8") as json_file:
+        json.dump(source_data, json_file, ensure_ascii=False, indent=4)
+
+
 if __name__ == "__main__":
-    get_intact_data()
+    change_category()
