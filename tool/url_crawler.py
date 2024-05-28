@@ -47,7 +47,7 @@ def get_photos(user_tag: str) -> dict:
                 if photo_url not in photos:
                     photos.append(photo_url)
 
-        if len(photos) >= info.valid_posts[user_tag]:
+        if len(photos) >= info.account[user_tag]["valid_posts"]:
             break
 
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
@@ -59,21 +59,20 @@ def get_photos(user_tag: str) -> dict:
 
         last_height = new_height
     photos = list(map(lambda x: x.replace("https", "http"), photos))
-    return {user_tag: photos[:info.valid_posts[user_tag]+1]}
+    return {user_tag: photos[:info.account[user_tag]["valid_posts"]]}
 
 
 def write_json(new_data, user_tag) -> None:
-    path = r"../res/img_url.json"
-    with open(path, "r", encoding="utf-8") as json_file:
+    with open(info.img_url_path, "r", encoding="utf-8") as json_file:
         load_data = json.load(json_file)
     load_data[user_tag] = new_data[user_tag]
-    with open(path, "w", encoding="utf-8") as json_file:
+    with open(info.img_url_path, "w", encoding="utf-8") as json_file:
         json.dump(load_data, json_file, ensure_ascii=False, indent=4)
 
 
 if __name__ == "__main__":
     init()
     time.sleep(5)
-    user = "matdongyeop"
+    user = "daejeon_people"
     img_urls = get_photos(user)
     write_json(img_urls, user)
