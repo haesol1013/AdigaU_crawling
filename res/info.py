@@ -10,3 +10,7 @@ valid_posts = {
 
 insta_id = ""
 insta_pw = ""
+
+raw_data_path = r"../res/raw_data.json"
+processed_data_path = r"../res/processed_data.json"
+img_url_path = r"../res/img_url.json"
