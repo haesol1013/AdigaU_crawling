@@ -1,7 +1,7 @@
 account = {
     "daejeon_people": {
         "first_post": "a[href='/reel/C4xQmmRLNc3/']",
-        "valid_posts": 52
+        "valid_posts": 53
     },
     "matdongyeop": {
         "first_post": "a[href='/reel/C7g8-gpyW1x/']",
