@@ -33,7 +33,7 @@ def is_available(dict_: dict) -> bool:
     return result
 
 
-def get_intact_data() -> None:
+def get_processed_data() -> None:
     with open(info.raw_data_path, "r", encoding="utf-8") as json_file:
         raw_data = json.load(json_file)
     processed_data = [dict_ for dict_ in raw_data if is_available(dict_)]
@@ -54,4 +54,4 @@ def change_category():
 
 
 if __name__ == "__main__":
-    get_intact_data()
+    get_processed_data()

@@ -73,6 +73,6 @@ def write_json(new_data, user_tag) -> None:
 if __name__ == "__main__":
     init()
     time.sleep(5)
-    user = "daejeon_people"
+    user = "matdongyeop"
     img_urls = get_photos(user)
     write_json(img_urls, user)
