@@ -16,12 +16,19 @@ def parse_daejeon_people(text: str, is_video: bool, likes: int):
     tags_matches = tags_pattern.findall(text)[1:]
 
     # 가공
+    if name_match:
+        name = name_match.group(1)
+        name = name.replace(" ", "")
+        name = name.replace("#", "")
+    else:
+        name = None
+
     info_tmp = info_match.group(1).split("＊") if info_match else None
     tags = split_tag(tags_matches)
 
     # 딕셔너리 형태로 저장
     result = {
-        "name": name_match.group(1).replace("#", "") if name_match else None,
+        "name": name,
         "location": info_tmp[0] if info_tmp else None,
         "time": info_tmp[1] if info_tmp else None,
         "tags": tags,
@@ -62,14 +69,16 @@ def parse_matdongyeop(text: str, is_video: bool, likes: int):
 
     description = description_match.replace(name_match, "")
 
-    if "여기는" in name_match:
-        name_match = name_match.replace("여기는", "")
-    elif "에서" in name_match:
-        name_match = name_match.replace("에서", "")
+    if name_match:
+        name = name_match[1:].replace(" ", "")
+        name = name.replace("여기는", "")
+        name = name.replace("에서", "")
+    else:
+        name = None
 
     # 딕셔너리 형태로 저장
     result = {
-        "name": name_match[1:] if name_match else None,
+        "name": name,
         "location": location if location else None,
         "time": time_match if time_match else None,
         "tags": tags,
