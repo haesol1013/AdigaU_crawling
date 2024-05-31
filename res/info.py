@@ -9,8 +9,8 @@ account = {
     }
 }
 
-insta_id = "adigau1234"
-insta_pw = "djelrkdb"
+insta_id = ""
+insta_pw = ""
 
 raw_data_path = r"../res/raw_data.json"
 processed_data_path = r"../res/processed_data.json"
