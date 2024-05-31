@@ -2,6 +2,8 @@ import json
 import res.info as info
 
 
+
+
 def get_category(tags: list[str]) -> str:
     tags = str(tags)
     category = None
@@ -29,14 +31,24 @@ def is_available(dict_: dict) -> bool:
               dict_["location"] and
               dict_["time"] and
               dict_["description"] and
-              dict_["category"])
+              dict_["category"] and
+              dict_["name"] not in name_set)
     return result
 
 
 def get_processed_data() -> None:
+    global name_set
+    name_set = set()
+    processed_data = []
+
     with open(info.raw_data_path, "r", encoding="utf-8") as json_file:
         raw_data = json.load(json_file)
-    processed_data = [dict_ for dict_ in raw_data if is_available(dict_)]
+
+    for dict_ in raw_data:
+        if is_available(dict_):
+            processed_data.append(dict_)
+            name_set.add(dict_["name"])
+
     with open(info.processed_data_path, "w", encoding="utf-8") as json_file:
         json.dump(processed_data, json_file, ensure_ascii=False, indent=4)
 

@@ -14,7 +14,7 @@ def init() -> None:
 
     # ChromeOptions 설정
     options = Options()
-    options.add_argument("--headless")
+    options.add_argument("--headless=new")
     options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36")
 
     # Chrome 실행 및 instagram 접속
@@ -73,6 +73,6 @@ def write_json(new_data, user_tag) -> None:
 if __name__ == "__main__":
     init()
     time.sleep(5)
-    user = "matdongyeop"
+    user = "daejeon_people"
     img_urls = get_photos(user)
     write_json(img_urls, user)

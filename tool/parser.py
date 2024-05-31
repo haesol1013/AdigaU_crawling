@@ -73,6 +73,8 @@ def parse_matdongyeop(text: str, is_video: bool, likes: int):
         name = name_match[1:].replace(" ", "")
         name = name.replace("여기는", "")
         name = name.replace("에서", "")
+        if '(' in name:
+            name = re.match(r"^(.*?)\(", name).group(1)
     else:
         name = None
 
