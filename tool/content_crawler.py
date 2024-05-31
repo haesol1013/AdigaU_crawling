@@ -88,7 +88,8 @@ def get_data(user_tag: str) -> tuple[list[dict], list[int]]:
         total_likes.append(likes)
 
         move_next()
-        driver.implicitly_wait(2)
+        time.sleep(0.7)
+        # driver.implicitly_wait(2)
 
     return total_data, total_likes
 
